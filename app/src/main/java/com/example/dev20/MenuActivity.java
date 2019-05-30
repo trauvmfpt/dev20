@@ -5,20 +5,43 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 public class MenuActivity extends AppCompatActivity {
     private static final String TAG = "MenuActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
+
+    Button btnSendLocation, btnChooseLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        if (isServicesOK()){
-            openMap();
+        if (!isServicesOK()){
+            Toast.makeText(this, "Google Maps is unavailable at the moment.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            btnSendLocation = (Button) findViewById(R.id.btnSendLocation);
+            btnSendLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            btnChooseLocation = (Button) findViewById(R.id.btnChooseLocation);
+            btnChooseLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MenuActivity.this, MarkerActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
     }
     private void openMap(){
