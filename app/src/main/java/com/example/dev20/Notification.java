@@ -1,9 +1,9 @@
 package com.example.dev20;
 
 public class Notification {
-    private String email;
-    private String lat;
-    private String lng;
+    public String email;
+    public String lat;
+    public String lng;
 
     public Notification(String email, String lat, String lng) {
         this.email = email;

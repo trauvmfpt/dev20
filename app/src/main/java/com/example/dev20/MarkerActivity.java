@@ -1,8 +1,15 @@
 package com.example.dev20;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,8 +29,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -88,11 +98,27 @@ public class MarkerActivity extends AppCompatActivity implements OnMapReadyCallb
                             .addData("lng",lng)
                             .build());
 
-                    mDatabase.child("notis").child(notiId).setValue(noti);
+                    mDatabase.child("notis").push().setValue(noti);
 
                 } else {
                     Toast.makeText(MarkerActivity.this, "You're not signed in?", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        mDatabase.child("notis").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                for ( DataSnapshot child: children){
+                    Notification noti = child.getValue(Notification.class);
+                    sendNotification(noti);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
@@ -143,5 +169,40 @@ public class MarkerActivity extends AppCompatActivity implements OnMapReadyCallb
         Date now = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         return dateFormat.format(now);
+    }
+    public void sendNotification(Notification noti){
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("email", noti.email);
+        intent.putExtra("lat", noti.lat);
+        intent.putExtra("lng", noti.lng);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationManager notif = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        String NOTIFICATION_CHANNEL_ID = "101";
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            @SuppressLint("WrongConstant") NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_MAX);
+
+            //Configure Notification Channel
+            notificationChannel.setDescription("Jam Notifications");
+            notificationChannel.enableLights(true);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.enableVibration(true);
+
+            notif.createNotificationChannel(notificationChannel);
+        }
+
+        android.app.Notification notify=new android.app.Notification.Builder
+                (getApplicationContext()).setContentTitle("JamTime")
+                .setContentText("Tap to see where it's jammin'.")
+                .setContentTitle("It's jammin' here!")
+                .setSmallIcon(R.drawable.abc)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setWhen(System.currentTimeMillis()).build();
+
+        notify.flags |= android.app.Notification.FLAG_AUTO_CANCEL;
+        notif.notify(0, notify);
     }
 }
