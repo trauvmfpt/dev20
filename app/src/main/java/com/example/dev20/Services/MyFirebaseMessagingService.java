@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.dev20.Config.Config;
 import com.example.dev20.MainActivity;
@@ -37,11 +38,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    @Override
+    public void onMessageSent(String s) {
+        super.onMessageSent(s);
+        Log.e("UPSTREAM", "##########onMessageSent: " + s );
+        Toast.makeText(this, "Sent jammed location", Toast.LENGTH_SHORT).show();
+    }
+
     public void sendNotification(){
 
         Intent intent = new Intent(getApplicationContext(), MapActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("id", Config.id);
+        intent.putExtra("email", Config.email);
         intent.putExtra("lat", Config.lat);
         intent.putExtra("lng", Config.lng);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -76,7 +84,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void getMessage(final RemoteMessage remoteMessage) {
         Map<String, String> data = remoteMessage.getData();
-        Config.id = data.get("id");
+        Config.email = data.get("email");
         Config.lat = data.get("lat");
         Config.lng = data.get("lng");
     }

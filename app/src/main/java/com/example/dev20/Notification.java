@@ -1,16 +1,24 @@
 package com.example.dev20;
 
 public class Notification {
-    private String id;
+    private String email;
     private String lat;
     private String lng;
 
-    public String getId() {
-        return id;
+    public Notification(String email, String lat, String lng) {
+        this.email = email;
+        this.lat = lat;
+        this.lng = lng;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Notification() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String id) {
+        this.email = email;
     }
 
     public String getLat() {

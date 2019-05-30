@@ -34,7 +34,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap mMap;
-    String id, lat, lng;
+    String email, lat, lng;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -61,7 +61,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        email = extras.getString("email");
         lat = extras.getString("lat");
         lng = extras.getString("lng");
     }
@@ -72,7 +72,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (!lat.equals("") && !lng.equals("")){
             LatLng jam = new LatLng(Long.parseLong(lat), Long.parseLong(lng));
-            mMap.addMarker(new MarkerOptions().position(jam).title("Jam!"));
+            mMap.addMarker(new MarkerOptions().position(jam).title("Jam!").snippet("Reported by user: " + email));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(jam));
         } else {
             Toast.makeText(this, "Can't get jam data.", Toast.LENGTH_SHORT).show();

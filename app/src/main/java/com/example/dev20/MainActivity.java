@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,13 +19,16 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private static final String TAG = "MainActivity";
     Button btnSignIn;
     private static final int LOGIN_PERMISSION = 1000;
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        FirebaseMessaging.getInstance().subscribeToTopic("jammin")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d(TAG, "Not successfully subscribed");
+                        }
+                        Log.d(TAG, "Successfully subscribed");
+                    }
+                });
 
     }
 
