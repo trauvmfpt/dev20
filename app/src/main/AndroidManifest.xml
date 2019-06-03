@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MenuActivity"></activity>
+        // khai báo Firebase Messaging service
         <service
             android:name=".Services.MyFirebaseMessagingService"
             android:exported="false">
@@ -28,11 +28,14 @@
             </intent-filter>
         </service>
 
+        // để dùng được Google Maps API thì cần API key
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity android:name=".MarkerActivity"></activity>
         <activity android:name=".MapActivity" />
+        // activity MainActivity sẽ chạy đầu tiên khi mở app, nhờ vào đoạn intent-filter phía dưới
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

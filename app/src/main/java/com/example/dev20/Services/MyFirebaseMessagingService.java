@@ -7,13 +7,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.dev20.Config.Config;
-import com.example.dev20.MainActivity;
 import com.example.dev20.MapActivity;
 import com.example.dev20.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -21,6 +18,13 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
+// cả class này dùng để tuỳ chỉnh tính năng gửi tin nhắn tự động qua Firebase
+// Firebase Messaging chỉ hỗ trợ xử lí khi nhận được tin nhắn từ server,
+// chưa hỗ trợ xử lí người dùng gửi tin nhắn lên Firebase database thì tự động tạo tin nhắn
+// trên Firebase Messaging và gửi trở lại về cho người dùng.
+
+// Em đang thử dùng luôn Firebase database để xem khi nào dữ liệu thay đổi thì tự động gửi tin nhắn
+// cho người dùng luôn, nhưng đang lỗi và cũng chưa biết lỗi ở đâu :p
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String s) {
@@ -28,21 +32,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e("NEW_TOKEN",s);
     }
 
+    // server gửi tin nhắn về thì làm gì
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+        // nếu trong tin nhắn có thông tin data thì lấy data và vào hàm sendNotification
+        // hàm sendNotification như đã comment ở MarkerActivity
         if(remoteMessage.getData()!=null){
             getMessage(remoteMessage);
             sendNotification();
         }
-    }
-
-    @Override
-    public void onMessageSent(String s) {
-        super.onMessageSent(s);
-        Log.e("UPSTREAM", "##########onMessageSent: " + s );
-        Toast.makeText(this, "Sent jammed location", Toast.LENGTH_SHORT).show();
     }
 
     public void sendNotification(){

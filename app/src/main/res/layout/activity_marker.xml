@@ -12,11 +12,19 @@
         android:id="@+id/map"
         tools:context=".MapActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
-    <Button
-        android:id="@+id/btnMark"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="630dp"
-        android:layout_marginStart="130dp"
-        android:text="Send This Location" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/btnMark"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="630dp"
+            android:layout_marginStart="130dp"
+            android:text="Send This Location" />
+    </RelativeLayout>
+
+
 </RelativeLayout>
